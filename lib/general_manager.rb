@@ -5,9 +5,9 @@ require './lib/game_team_manager'
 class GeneralManager
   attr_reader :game_manager, :team_manager, :game_teams_manager
 
-  def initialize(files)
-    @game_manager = GameManager.new(files[:games])
-    @team_manager = TeamManager.new(files[:teams])
-    @game_team_manager = GameTeamManager.new(files[:game_teams])
+  def initialize(locations)
+    @game_manager = GameManager.new(locations[:games])
+    @team_manager = TeamManager.new(locations[:teams])
+    @game_team_manager = GameTeamManager.new(locations[:game_teams])
   end
 end
