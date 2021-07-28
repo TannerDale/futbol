@@ -3,8 +3,9 @@ require 'csv'
 class GameManager
   include CSVParser
 
-  def initialize
+  def initialize(file_path)
     @games = []
+    make_games(file_path)
   end
 
   def make_games(file_path)

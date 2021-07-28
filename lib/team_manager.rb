@@ -4,12 +4,13 @@ require './lib/team'
 class TeamManager
   attr_reader :teams
 
-  def initialize
+  def initialize(file_path)
     @teams = []
+    add_teams(file_path)
   end
 
   # Helper
-  def add_team(team_data)
+  def add_teams(team_data)
     CSV.foreach(file_path, headers: true) do |row|
       @teams << Team.new(row)
     end
