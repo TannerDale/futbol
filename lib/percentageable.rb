@@ -57,7 +57,7 @@ module Percentageable
 
   def avg_season_goals(goal_data)
     goal_data.reduce({}) do |acc, goals|
-      acc[goals[0]] = avg(goals[1], games_per_season(goals[0])).round(2)
+      acc[goals[0]] = avg(goals[1], get_games_per_season(goals[0])).round(2)
       acc
     end
   end
