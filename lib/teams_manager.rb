@@ -1,19 +1,13 @@
-require 'csv'
+require_relative 'manager'
+require_relative 'file_parser'
 require_relative 'team'
 
-class TeamsManager
-  attr_reader :teams
+
+class TeamsManager < Manager
+  include FileParser
 
   def initialize(file_path)
-    @teams = []
-    make_teams(file_path)
-  end
-
-  # Helper
-  def make_teams(file_path)
-    CSV.foreach(file_path, headers: true) do |row|
-      @teams << Team.new(row)
-    end
+    @teams = parse_teams(file_path)
   end
 
   # Interface
@@ -40,7 +34,6 @@ class TeamsManager
     @teams.count
   end
 
-  # Interface
   def team_by_id(team_id)
     team = @teams.find do |team|
       team.team_id == team_id
