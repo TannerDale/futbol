@@ -1,11 +1,13 @@
 require_relative 'teams_manager'
 require_relative 'games_manager'
 require_relative 'game_teams_manager'
+require_relative 'seasons_manager'
 
 class GeneralManager
   attr_reader :teams_manager, :games_manager, :game_teams_manager
 
   def initialize(locations)
+    @seasons_manager = SeasonsManager.new
     @teams_manager = TeamsManager.new(locations[:teams])
     @games_manager = GamesManager.new(locations[:games])
     @game_teams_manager = GameTeamsManager.new(locations[:game_teams])
@@ -28,11 +30,11 @@ class GeneralManager
   end
 
   def count_of_games_by_season
-    @games_manager.count_of_games_by_season
+    @seasons_manager.count_of_games_by_season
   end
 
   def average_goals_by_season
-    @games_manager.average_goals_by_season
+    @seasons_manager.average_goals_by_season
   end
 
   def average_goals_per_game
@@ -70,39 +72,39 @@ class GeneralManager
   end
 
   def winningest_coach(season)
-    @game_teams_manager.coach_results(season, :max)
+    @seasons_manager.coach_results(season, :max)
   end
 
   def worst_coach(season)
-    @game_teams_manager.coach_results(season, :min)
+    @seasons_manager.coach_results(season, :min)
   end
 
   def most_accurate_team(season)
-    id = @game_teams_manager.accuracy_results(season, :max)
+    id = @seasons_manager.accuracy_results(season, :max)
     @teams_manager.team_by_id(id)
   end
 
   def least_accurate_team(season)
-    id = @game_teams_manager.accuracy_results(season, :min)
+    id = @seasons_manager.accuracy_results(season, :min)
     @teams_manager.team_by_id(id)
   end
 
   def most_tackles(season)
-    id = @game_teams_manager.tackle_results(season, :max)
+    id = @seasons_manager.tackle_results(season, :max)
     @teams_manager.team_by_id(id)
   end
 
   def fewest_tackles(season)
-    id = @game_teams_manager.tackle_results(season, :min)
+    id = @seasons_manager.tackle_results(season, :min)
     @teams_manager.team_by_id(id)
   end
 
   def best_season(team_id)
-    @game_teams_manager.season_results(team_id, :max)
+    @seasons_manager.season_results(team_id, :max)
   end
 
   def worst_season(team_id)
-    @game_teams_manager.season_results(team_id, :min)
+    @seasons_manager.season_results(team_id, :min)
   end
 
   def average_win_percentage(team_id)
