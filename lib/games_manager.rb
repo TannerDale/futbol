@@ -1,44 +1,24 @@
-require 'csv'
-require_relative 'game'
-require_relative 'seasons_manager'
+require_relative 'manager'
+require_relative 'percentageable'
 
-class GamesManager < SeasonsManager
-  attr_reader :games
+class GamesManager < Manager
+   include Percentageable
 
   def initialize(file_path)
-    @games = []
     make_games(file_path)
-  end
-
-  def make_games(file_path)
-    CSV.foreach(file_path, headers: true) do |row|
-      @games << Game.new(row)
-    end
   end
 
   def score_results(min_max)
     min_max_game = {
-      max: -> { @games.max_by { |game| game.total_goals } },
-      min: -> { @games.min_by { |game| game.total_goals } }
+      max: -> { @@games.max_by { |game| game.total_goals } },
+      min: -> { @@games.min_by { |game| game.total_goals } }
     }
     game = min_max_game[min_max].call
     game.total_goals
   end
 
-  def count_of_games_by_season
-    get_season_game_count
-  end
-
-  def average_goals_by_season
-    avg_season_goals(goals_per_season)
-  end
-
-  def goals_per_season
-    get_goals_per_season
-  end
-
   def average_goals_per_game
-    goal_per_game_avg(@games)
+    goal_per_game_avg(@@games)
   end
 
   def games_per_season(season)
@@ -46,7 +26,7 @@ class GamesManager < SeasonsManager
   end
 
   def get_hoa_goals(hoa)
-    @games.reduce({}) do |acc, game|
+    @@games.reduce({}) do |acc, game|
       team_id, goals = get_game_info(game)[hoa]
       acc[team_id] ||= { goals: 0, total: 0 }
       acc[team_id][:goals] += goals
@@ -84,15 +64,19 @@ class GamesManager < SeasonsManager
   end
 
   def opponent_win_count(id)
-    @games.reduce({}) do |acc, game|
+    @@games.reduce({}) do |acc, game|
       if game.has_team?(id)
-        opp_id = opponent_id(id, game)
-        acc[opp_id] ||= {wins: 0, total: 0}
-        acc[opp_id][:wins] += 1 if !game.winner?(id)
-        acc[opp_id][:total] += 1
+        process_opponent_game(id, acc, game)
       end
       acc
     end
+  end
+
+  def process_opponent_game(id, acc, game)
+    opp_id = opponent_id(id, game)
+    acc[opp_id] ||= {wins: 0, total: 0}
+    acc[opp_id][:wins] += 1 if !game.winner?(id)
+    acc[opp_id][:total] += 1
   end
 
   def opponent_id(id, game)
